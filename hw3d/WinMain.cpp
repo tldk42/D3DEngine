@@ -1,14 +1,14 @@
 #include <Windows.h>
-
+#include <sstream>
 #include "WindowsMessageMap.h"
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	static WindowsMessageMap mm;
 	OutputDebugString(mm(msg, lParam, wParam).c_str());
-	switch(msg)
+	switch (msg)
 	{
-	case WM_CLOSE :
+	case WM_CLOSE:
 		PostQuitMessage(69);
 		break;
 	case WM_KEYDOWN:
@@ -17,7 +17,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			SetWindowText(hWnd, "Title Changed");
 		}
 		break;
-
+	case WM_CHAR:
+		{
+			static std::string title;
+			title.push_back(static_cast<char>(wParam));
+			SetWindowText(hWnd, title.c_str());
+		}
+		break;
+	case WM_LBUTTONDOWN:
+		{
+			POINTS pt = MAKEPOINTS(lParam);
+			std::ostringstream oss;
+			oss << "(" << pt.x << "," << pt.y << ")";
+			SetWindowText(hWnd, oss.str().c_str());
+		}
 	}
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
