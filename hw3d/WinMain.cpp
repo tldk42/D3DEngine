@@ -1,11 +1,21 @@
 #include <Windows.h>
 
+#include "WindowsMessageMap.h"
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+	static WindowsMessageMap mm;
+	OutputDebugString(mm(msg, lParam, wParam).c_str());
 	switch(msg)
 	{
 	case WM_CLOSE :
 		PostQuitMessage(69);
+		break;
+	case WM_KEYDOWN:
+		if (wParam == 'F') // testing
+		{
+			SetWindowText(hWnd, "Title Changed");
+		}
 		break;
 
 	}
@@ -38,7 +48,7 @@ int CALLBACK WinMain(
 	// create window
 	HWND hWnd = CreateWindowEx(
 		0, pClassName,
-		"Happy Hard Window",
+		"Sample Window",
 		WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
 		200, 200, 1080, 920,
 		nullptr, nullptr, hInstance, nullptr);
